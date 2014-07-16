@@ -65,7 +65,7 @@ class TasksController extends \BaseController {
 		$r= $task->update(Input::all());
 
 		if ($r != 0)
-			return Response::make("", 404);
+			return Response::make("", 422);
 
 		return Response::make("", 204);
 	}
