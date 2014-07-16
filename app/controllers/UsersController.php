@@ -35,10 +35,13 @@ class UsersController extends \BaseController {
 	public function tasks($username)
 	{
 		$tasks=Task::all();
+		if (!($user = User::findOrFail($username)))
+			return Response::make("", 404);
+
 		$usertasks=array();
 
 		foreach ($tasks as $key => $task) {
-			if ($task->user == $username)
+			if ($task->user == $user->username)
 				array_push($usertasks, $task);
 		}
 
