@@ -45,7 +45,7 @@ class UsersController extends \BaseController {
 				array_push($usertasks, $task);
 		}
 
-		return Response::json($usertasks);
+		return Response::json($usertasks, 200);
 	}
 
 }
