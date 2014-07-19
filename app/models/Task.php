@@ -57,9 +57,38 @@ class Task  {
 
 	public static function create($data){
 		$output = array();
-		$pid = exec($data['command'] . ' > /dev/null 2>&1 & echo $!; ', $output);
+		$stdout = array();
+		$stderr= array();
 
-		return Task::findOrFail($pid);
+		if (!isset($data['output']))
+			$pid = exec($data['command'] . ' > /dev/null 2>&1 & echo $!; ', $output);
+		else
+			$pid = exec($data['command'] . ' > stdout 2>stderr & echo $!; ', $output);
+		$task =  Task::findOrFail($pid);
+
+		if ($task != null && !isset($data['output']))
+			return $task;
+
+		if ($task == null && isset($data['output']))
+		{
+			exec("cat stdout", $stdout);
+			$r['output'] = $stdout;
+			exec("cat stderr", $stderr);
+			$r['$error'] = $stderr;
+			exec("rm stderr stdout");
+			return $r;
+		}
+		else
+			if (isset($data['output']))
+			{
+				exec("cat stdout", $output);
+				$task->output = $output;
+				exec("cat stderr", $output);
+				$task->error = $output;
+				exec("rm stderr stdout");
+			}
+		return $task;
+		
 	}
 
 	public function destroy(){

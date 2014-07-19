@@ -24,11 +24,14 @@ class TasksController extends \BaseController {
 	public function store()
 	{
 
-		$r = Task::create(Input::all());
-		if ($r != null)
+		$r = Task::create($data=Input::all());
+		if ($r == null)
+			return Response::make("", 422);
+
+		if (isset($r->pid) || isset($r->output) )
 			return Response::json($r, 201);
 		else
-			return Response::make("", 422);
+			return Response::json($r, 422);
 	}
 
 	/**
